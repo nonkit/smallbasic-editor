@@ -4,6 +4,7 @@
 
 namespace SmallBasic.Compiler
 {
+    using System;
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Linq;
@@ -31,14 +32,14 @@ namespace SmallBasic.Compiler
     public sealed class SmallBasicEngine
     {
         private readonly SmallBasicCompilation compilation;
-        private readonly Dictionary<(string library, string eventName), string> eventCallbacks;
+        private readonly Dictionary<string, string> eventCallbacks;
 
         public SmallBasicEngine(SmallBasicCompilation compilation, IEngineLibraries libraries)
         {
             Debug.Assert(!compilation.Diagnostics.Any(), "Cannot execute a compilation with errors.");
 
             this.compilation = compilation;
-            this.eventCallbacks = new Dictionary<(string library, string eventName), string>();
+            this.eventCallbacks = new Dictionary<string, string>(StringComparer.CurrentCultureIgnoreCase);
 
             this.CurrentSourceLine = 0;
 
@@ -160,13 +161,19 @@ namespace SmallBasic.Compiler
 
         internal void SetEventCallback(string library, string eventName, string subModule)
         {
-            this.eventCallbacks[(library, eventName)] = subModule;
+            this.eventCallbacks[$"{library}.${eventName}"] = subModule;
         }
 
         internal void RaiseEvent(string library, string eventName)
         {
-            if (this.eventCallbacks.TryGetValue((library, eventName), out string subModule))
+            if (this.eventCallbacks.TryGetValue($"{library}.${eventName}", out string subModule))
             {
+                var existing = this.ExecutionStack.Take(this.ExecutionStack.Count - 1).FirstOrDefault(frame => frame.Module.Name == subModule);
+                if (!existing.IsDefault())
+                {
+                    this.ExecutionStack.Remove(existing);
+                }
+
                 this.ExecutionStack.AddFirst(new Frame(this.Modules[subModule]));
             }
         }
