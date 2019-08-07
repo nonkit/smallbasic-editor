@@ -1,5 +1,5 @@
-﻿// <copyright file="Binder.cs" company="2018 Omar Tawfik">
-// Copyright (c) 2018 Omar Tawfik. All rights reserved. Licensed under the MIT License. See LICENSE file in the project root for license information.
+﻿// <copyright file="Binder.cs" company="MIT License">
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
 // </copyright>
 
 namespace SmallBasic.Compiler.Binding
@@ -546,8 +546,7 @@ namespace SmallBasic.Compiler.Binding
             {
                 if (expectsValue)
                 {
-                    hasErrors = true;
-                    this.diagnostics.ReportExpectedExpressionWithAValue(syntax.Range);
+                    return new BoundVariableExpression(syntax, hasValue: true, hasErrors, name);
                 }
 
                 return new BoundSubModuleExpression(syntax, hasValue: false, hasErrors, name);

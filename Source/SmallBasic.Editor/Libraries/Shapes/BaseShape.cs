@@ -1,5 +1,5 @@
-﻿// <copyright file="BaseShape.cs" company="2018 Omar Tawfik">
-// Copyright (c) 2018 Omar Tawfik. All rights reserved. Licensed under the MIT License. See LICENSE file in the project root for license information.
+﻿// <copyright file="BaseShape.cs" company="MIT License">
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
 // </copyright>
 
 namespace SmallBasic.Editor.Libraries.Shapes
@@ -124,11 +124,6 @@ namespace SmallBasic.Editor.Libraries.Shapes
 
         private Action AttachRotation(Action body, TreeComposer composer)
         {
-            if (this.Angle == 0 && !this.AngleAnimation.HasValue)
-            {
-                return body;
-            }
-
             return () =>
             {
                 composer.Element(
@@ -170,11 +165,6 @@ namespace SmallBasic.Editor.Libraries.Shapes
 
         private Action AttachScale(Action body, TreeComposer composer)
         {
-            if (this.ScaleX == 1 && this.ScaleY == 1)
-            {
-                return body;
-            }
-
             return () =>
             {
                 composer.Element(

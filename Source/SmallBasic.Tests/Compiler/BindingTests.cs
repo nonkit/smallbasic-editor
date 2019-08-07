@@ -1,5 +1,5 @@
-// <copyright file="BindingTests.cs" company="2018 Omar Tawfik">
-// Copyright (c) 2018 Omar Tawfik. All rights reserved. Licensed under the MIT License. See LICENSE file in the project root for license information.
+// <copyright file="BindingTests.cs" company="MIT License">
+// Licensed under the MIT License. See LICENSE file in the project root for license information.
 // </copyright>
 
 namespace SmallBasic.Tests.Compiler
@@ -12,6 +12,16 @@ namespace SmallBasic.Tests.Compiler
 
     public sealed class BindingTests : IClassFixture<CultureFixture>
     {
+        [Fact]
+        public void CallingNonexistentSubroutine()
+        {
+            new SmallBasicCompilation("test()").VerifyDiagnostics(
+            // test()
+            // ^^^^^^
+            // This expression is not a valid submodule or method to be called.
+            new Diagnostic(DiagnosticCode.UnsupportedInvocationBaseExpression, ((0, 0), (0, 5))));
+        }
+
         [Fact]
         public void ItReportsInForLoopFromExpression()
         {
@@ -439,19 +449,6 @@ TextWindow.WriteLine = 5").VerifyDiagnostics(
                 // ^^^^^^^^^^^^^^^^^^^^
                 // This expression must have a value to be used here.
                 new Diagnostic(DiagnosticCode.ExpectedExpressionWithAValue, ((1, 0), (1, 19))));
-        }
-
-        [Fact]
-        public void ItReportsAssigningToSubModule()
-        {
-            new SmallBasicCompilation(@"
-Sub x
-EndSub
-x = 5").VerifyDiagnostics(
-                // x = 5
-                // ^
-                // This expression must have a value to be used here.
-                new Diagnostic(DiagnosticCode.ExpectedExpressionWithAValue, ((3, 0), (3, 0))));
         }
 
         [Fact]
